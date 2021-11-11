@@ -2,6 +2,7 @@
 /dts-v1/;
 
 #include "aspeed-g5.dtsi"
+#include <dt-bindings/gpio/aspeed-gpio.h>
 
 / {
 	model = "Celestica Ares Gen2 BMC";
@@ -36,6 +37,34 @@
 			compatible = "shared-dma-pool";
 			reusable;
 		};
+	};
+
+    leds {
+        compatible = "gpio-leds";
+        identify {
+            gpios = <&gpio ASPEED_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
+        };
+    };
+
+	gpio-keys {
+		compatible = "gpio-keys";
+		id-button {
+			label = "id-button";
+			gpios = <&gpio ASPEED_GPIO(H, 1) GPIO_ACTIVE_LOW>;
+			linux,code = <ASPEED_GPIO(H, 1)>;
+		};
+
+        ps0-presence {
+            label = "ps0-presence";
+            gpios = <&gpio ASPEED_GPIO(F, 0) GPIO_ACTIVE_LOW>;
+            linux,code = <ASPEED_GPIO(F, 0)>;
+        };
+
+        ps1-presence {
+            label = "ps1-presence";
+            gpios = <&gpio ASPEED_GPIO(F, 1) GPIO_ACTIVE_LOW>;
+            linux,code = <ASPEED_GPIO(F, 1)>;
+        };
 	};
 
 	iio-hwmon {
@@ -81,7 +110,7 @@
 };
 
 &mac0 {
-	status = "okay";
+	status = "disabled";
 
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_rmii1_default>;
@@ -102,6 +131,16 @@
 	use-ncsi;
 };
 
+&lpc_snoop {
+	status = "okay";
+	snoop-ports = <0x80>;
+};
+
+&lpc_ctrl {
+	// Enable lpc clock
+	status = "okay";
+};
+
 &kcs2 {
 	// BMC KCS channel 2
 	status = "okay";
@@ -114,8 +153,52 @@
 	aspeed,lpc-io-reg = <0xca2>;
 };
 
+&gpio {
+    status = "okay";
+	gpio-line-names =
+	/*A0-A7*/	"","","","","","","","",
+	/*B0-B7*/	"","","","","","","","",
+	/*C0-C7*/	"","","","","","","","",
+	/*D0-D7*/	"","","","","","","","",
+	/*E0-E7*/	"POWER_BUTTON","POWER_OUT","","","","","","",
+	/*F0-F7*/	"","","","","","","","",
+	/*G0-G7*/	"","","","","","","","",
+	/*H0-H7*/	"","","","","","","","",
+	/*I0-I7*/	"","","","","","","","",
+	/*J0-J7*/	"","PS_PWROK","","","","","","",
+	/*K0-K7*/	"","","","","","","","",
+	/*L0-L7*/	"","","","","","","","",
+	/*M0-M7*/	"","","","","","","","",
+	/*N0-N7*/	"","","","","","","","",
+	/*O0-O7*/	"","","","","","","","",
+	/*P0-P7*/	"","","","","","","","",
+	/*Q0-Q7*/	"","","","","","","","",
+	/*R0-R7*/	"","","","","","","","",
+	/*S0-S7*/	"","","","","","","","",
+	/*T0-T7*/	"","","","","","","","",
+	/*U0-U7*/	"","","","","","","","",
+	/*V0-V7*/	"","","","","","","","",
+	/*W0-W7*/	"","","","","","","","",
+	/*X0-X7*/	"","","","","","","","",
+	/*Y0-Y7*/	"","","","","","","","",
+	/*Z0-Z7*/	"","","","","","","","",
+	/*AA0-AA7*/	"RESET_OUT","","","","","","","POST_COMPLETE",
+	/*AB0-AB7*/	"","","","","","","","",
+	/*AC0-AC7*/	"","","","","","","","";
+};
+
 &adc {
     status = "okay";
+};
+
+&peci0 {
+    status = "okay";
+
+    intel-peci-dimmtemp@30 {
+        compatible = "intel,peci-client";
+        reg = <0x30>;
+        status = "okay";
+    };
 };
 
 &i2c0 {
@@ -124,6 +207,11 @@
 
 &i2c1 {
 	status = "okay";
+
+    power-supply@58 {
+        compatible = "pmbus";
+        reg = <0x58>;
+    };
 };
 
 &i2c2 {
@@ -132,6 +220,16 @@
 
 &i2c3 {
 	status = "okay";
+
+     tmp75@48 {
+         compatible = "ti,tmp75";
+         reg = <0x48>;
+     };
+
+     tmp75@4a {
+         compatible = "ti,tmp75";
+         reg = <0x4a>;
+     };
 };
 
 &i2c4 {
@@ -144,6 +242,12 @@
 
 &i2c6 {
 	status = "okay";
+
+    /* Baseboard FRU */
+	eeprom@53 {
+		compatible = "atmel,24c64";
+		reg = <0x53>;
+	};
 };
 
 &i2c7 {
@@ -175,11 +279,31 @@
 	pinctrl-0 = <&pinctrl_pwm0_default &pinctrl_pwm1_default>;
 	fan@0 {
 		reg = <0x00>;
-		aspeed,fan-tach-ch = /bits/ 8 <0x00 0x01>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x01>;
 	};
 
 	fan@1 {
+		reg = <0x00>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x01>;
+	};
+
+	fan@2 {
+		reg = <0x00>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x02>;
+	};
+
+	fan@3 {
 		reg = <0x01>;
-		aspeed,fan-tach-ch = /bits/ 8 <0x02 0x03>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x03>;
+	};
+
+	fan@4 {
+		reg = <0x01>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x04>;
+	};
+
+	fan@5 {
+		reg = <0x01>;
+		aspeed,fan-tach-ch = /bits/ 8 <0x05>;
 	};
 };
