@@ -10,6 +10,8 @@
 
 	aliases {
 		serial4 = &uart5;
+        i2c16 = &i2c_pe0;
+        i2c17 = &i2c_pe1;
 	};
 
 	chosen {
@@ -225,7 +227,7 @@
          compatible = "ti,tmp75";
          reg = <0x48>;
      };
-
+ 
      tmp75@4a {
          compatible = "ti,tmp75";
          reg = <0x4a>;
@@ -234,6 +236,24 @@
 
 &i2c4 {
 	status = "okay";
+    i2c-switch@71 {
+        compatible = "nxp,pca9548";
+        reg = <0x71>;
+        #address-cells = <1>;
+        #size-cells = <0>;
+        i2c-mux-idle-disconnect;
+
+        i2c_pe0: i2c@0 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <0>;
+        };
+        i2c_pe1: i2c@1 {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <1>;
+        };
+    };
 };
 
 &i2c5 {
@@ -242,12 +262,6 @@
 
 &i2c6 {
 	status = "okay";
-
-    /* Baseboard FRU */
-	eeprom@53 {
-		compatible = "atmel,24c64";
-		reg = <0x53>;
-	};
 };
 
 &i2c7 {
