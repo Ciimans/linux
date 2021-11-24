@@ -3,6 +3,7 @@
 
 #include "aspeed-g5.dtsi"
 #include <dt-bindings/gpio/aspeed-gpio.h>
+#include <dt-bindings/i2c/i2c.h>
 
 / {
 	model = "Celestica Ares Gen2 BMC";
@@ -143,16 +144,16 @@
 	status = "okay";
 };
 
-&kcs2 {
-	// BMC KCS channel 2
-	status = "okay";
-	aspeed,lpc-io-reg = <0xca8>;
-};
-
 &kcs3 {
 	// BMC KCS channel 3
 	status = "okay";
 	aspeed,lpc-io-reg = <0xca2>;
+};
+
+&kcs4 {
+	// BMC KCS channel 4
+	status = "okay";
+	aspeed,lpc-io-reg = <0xca4>;
 };
 
 &gpio {
@@ -195,25 +196,20 @@
 
 &peci0 {
     status = "okay";
-
-    intel-peci-dimmtemp@30 {
-        compatible = "intel,peci-client";
-        reg = <0x30>;
-        status = "okay";
-    };
 };
 
 &i2c0 {
+    // ME IPMB
 	status = "okay";
+    ipmb0@10 {
+        compatible = "ipmb-dev";
+        reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
+        i2c-protocol;
+    };
 };
 
 &i2c1 {
 	status = "okay";
-
-    power-supply@58 {
-        compatible = "pmbus";
-        reg = <0x58>;
-    };
 };
 
 &i2c2 {
@@ -222,16 +218,6 @@
 
 &i2c3 {
 	status = "okay";
-
-     tmp75@48 {
-         compatible = "ti,tmp75";
-         reg = <0x48>;
-     };
- 
-     tmp75@4a {
-         compatible = "ti,tmp75";
-         reg = <0x4a>;
-     };
 };
 
 &i2c4 {
