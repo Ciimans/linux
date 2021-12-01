@@ -49,27 +49,6 @@
         };
     };
 
-	gpio-keys {
-		compatible = "gpio-keys";
-		id-button {
-			label = "id-button";
-			gpios = <&gpio ASPEED_GPIO(H, 1) GPIO_ACTIVE_LOW>;
-			linux,code = <ASPEED_GPIO(H, 1)>;
-		};
-
-        ps0-presence {
-            label = "ps0-presence";
-            gpios = <&gpio ASPEED_GPIO(F, 0) GPIO_ACTIVE_LOW>;
-            linux,code = <ASPEED_GPIO(F, 0)>;
-        };
-
-        ps1-presence {
-            label = "ps1-presence";
-            gpios = <&gpio ASPEED_GPIO(F, 1) GPIO_ACTIVE_LOW>;
-            linux,code = <ASPEED_GPIO(F, 1)>;
-        };
-	};
-
 	iio-hwmon {
 		compatible = "iio-hwmon";
 		io-channels = <&adc 0>, <&adc 1>, <&adc 2>, <&adc 3>,
@@ -166,7 +145,7 @@
 	/*E0-E7*/	"POWER_BUTTON","POWER_OUT","","","","","","",
 	/*F0-F7*/	"","","","","","","","",
 	/*G0-G7*/	"","","","","","","","",
-	/*H0-H7*/	"","","","","","","","",
+	/*H0-H7*/	"","ID_BUTTON","","","","","","",
 	/*I0-I7*/	"","","","","","","","",
 	/*J0-J7*/	"","PS_PWROK","","","","","","",
 	/*K0-K7*/	"","","","","","","","",
