@@ -29,9 +29,9 @@
 		#size-cells = <1>;
 		ranges;
 
-		vga_memory: framebuffer@9f000000 {
+		vga_memory: framebuffer@bf000000 {
 			no-map;
-			reg = <0x9f000000 0x01000000>; /* 16M */
+			reg = <0xbf000000 0x01000000>; /* 16M */
 		};
 
 		video_engine_memory: jpegbuffer {
